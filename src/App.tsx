@@ -189,26 +189,38 @@ export default function App() {
   const [portraitMode, setPortraitMode] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [hasInteracted, setHasInteracted] = useState(false);
   const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
   const exploreAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    if (!hasInteracted) return;
+
     // Stop both to start clean
     if (welcomeAudioRef.current) welcomeAudioRef.current.pause();
     if (exploreAudioRef.current) exploreAudioRef.current.pause();
 
+    const playAudio = async (audioElement: HTMLAudioElement) => {
+      try {
+        // Quick check if source is valid by looking for 404 will happen naturally 
+        // but we catch the promise rejection.
+        audioElement.currentTime = 0;
+        await audioElement.play();
+      } catch (e) {
+        console.warn('Audio playback failed (file might be missing or blocked):', e);
+      }
+    };
+
     if (showWelcome) {
       if (welcomeAudioRef.current) {
-        welcomeAudioRef.current.currentTime = 0;
-        welcomeAudioRef.current.play().catch(e => console.log('Audio play blocked:', e));
+        playAudio(welcomeAudioRef.current);
       }
     } else if (!activeGame) {
       if (exploreAudioRef.current) {
-        exploreAudioRef.current.currentTime = 0;
-        exploreAudioRef.current.play().catch(e => console.log('Audio play blocked:', e));
+        playAudio(exploreAudioRef.current);
       }
     }
-  }, [showWelcome, activeGame]);
+  }, [showWelcome, activeGame, hasInteracted]);
 
   const handleOpenGame = (game: Game) => {
     setActiveGame(game);
@@ -222,11 +234,22 @@ export default function App() {
 
   return (
     <>
-      <audio ref={welcomeAudioRef} src="/02.mp3" loop />
-      <audio ref={exploreAudioRef} src="/05.mp3" loop />
+      <audio ref={welcomeAudioRef} src="https://jetta.vgmtreasurechest.com/soundtracks/ps-vita-system-music/lqxqkbet/02.%20Home%20Screen.mp3" loop />
+      <audio ref={exploreAudioRef} src="https://jetta.vgmtreasurechest.com/soundtracks/ps-vita-system-music/beryrota/05.%20PlayStation%20Store%20-%20Main%20Theme.mp3" loop />
+
+      {!hasInteracted && (
+        <div 
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-[#050510] cursor-pointer"
+          onClick={() => setHasInteracted(true)}
+        >
+          <div className="animate-pulse text-white/60 text-xl md:text-2xl font-bold tracking-[0.3em] uppercase">
+            Click Anywhere to Enter
+          </div>
+        </div>
+      )}
       
       <AnimatePresence>
-        {showWelcome && (
+        {showWelcome && hasInteracted && (
           <motion.div
             key="welcome-screen"
             initial={{ opacity: 1 }}
