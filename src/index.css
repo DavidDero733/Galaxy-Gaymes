@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
 
 body {
   background-color: #050510;
@@ -6,6 +11,7 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
+
 

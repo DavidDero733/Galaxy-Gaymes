@@ -1,7 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Gamepad2, X, Plus, Rocket, Globe, Smartphone, Monitor } from 'lucide-react';
+import { Gamepad2, X, Plus, Rocket, Globe, Smartphone, Monitor, Search } from 'lucide-react';
 import { Forum } from './components/Forum';
+
+import shellshockersImg from './assets/images/shell_shockers_cover_1780592380165.png';
+import krunkerImg from './assets/images/krunker_io_cover_1780592393691.png';
+import smashkartsImg from './assets/images/smash_karts_cover_1780592410530.png';
+import holeioImg from './assets/images/hole_io_cover_1780592424235.png';
+import paperioImg from './assets/images/paper_io_cover_1780592437726.png';
+import fnaf1Img from './assets/images/fnaf_1_cover_1780592449589.png';
+import fnaf2Img from './assets/images/fnaf_2_cover_1780592495414.png';
+import retrobowlImg from './assets/images/retro_bowl_cover_1780592463075.png';
+import slopeImg from './assets/images/slope_cover_1780592475345.png';
+import drivemadImg from './assets/images/drive_mad_cover_1780592509359.png';
+import fnfImg from './assets/images/fnf_cover_1780592522601.png';
+import snakeioImg from './assets/images/snake_io_cover_1780592535385.png';
+import tombmaskImg from './assets/images/tomb_mask_cover_1780592547297.png';
+import twovtwoImg from './assets/images/twovtwo_io_cover_1780592560627.png';
+import genericGameImg from './assets/images/generic_game_cover_1780593040352.png';
 
 interface Game {
   id: string;
@@ -14,192 +30,155 @@ interface Game {
 
 const DEFAULT_GAMES: Game[] = [
   {
-    id: 'hextris',
-    name: 'Hextris',
-    url: 'https://hextris.github.io/hextris/',
-    image: 'https://raw.githubusercontent.com/hextris/hextris/master/favicon.ico',
-    color: '#a855f7'
-  },
-  {
-    id: '2048',
-    name: '2048',
-    url: 'https://gabrielecirulli.github.io/2048/',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/2048_logo.svg/512px-2048_logo.svg.png',
-    color: '#ffb347'
-  },
-  {
-    id: 'flappy-bird',
-    name: 'Floppy Bird',
-    url: 'https://nebezb.com/floppybird/',
-    image: 'https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png',
-    color: '#ff3366',
-    defaultPortrait: true
-  },
-  {
-    id: 'pacman',
-    name: 'Pac-Man',
-    url: 'https://macek.github.io/google_pacman/',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Pacman.svg/1200px-Pacman.svg.png',
-    color: '#facc15'
-  },
-  {
-    id: 'react-tetris',
-    name: 'Tetris',
-    url: 'https://chvin.github.io/react-tetris/',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Tetris_logo.png',
-    color: '#00FFFF',
-    defaultPortrait: true
-  },
-  {
-    id: 'ztype',
-    name: 'ZType',
-    url: 'https://zty.pe/',
-    image: 'https://img.itch.zone/aW1hZ2UvNTM5OTYvMjUwNDAxLnBuZw==/original/71J1Uo.png',
-    color: '#FF00FF'
-  },
-  {
-    id: 'tower-blocks',
-    name: 'Tower Blocks',
-    url: 'https://iamkun.github.io/tower_game/',
-    image: 'https://iamkun.github.io/tower_game/assets/icon.png',
-    color: '#39ff14',
-    defaultPortrait: true
-  },
-  {
-    id: 'alien-invasion',
-    name: 'Alien Invasion',
-    url: 'https://cykod.github.io/Alien-Invasion/',
-    image: 'https://cykod.github.io/Alien-Invasion/images/sprites.png',
-    color: '#7597de'
-  },
-  {
-    id: 'basket-random',
-    name: 'Basket Random',
-    url: 'https://basketrandom.github.io/',
-    image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#FF8800'
-  },
-  {
-    id: 'bitlife',
-    name: 'BitLife',
-    url: 'https://bitlifefree.io/',
-    image: 'https://images.unsplash.com/photo-1555529771-835f59bfc40a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#ff3366',
-    defaultPortrait: true
-  },
-  {
-    id: 'geometry-dash',
-    name: 'Geometry Dash',
-    url: 'https://geometrydash.io/',
-    image: 'https://images.unsplash.com/photo-1508933221971-ce453bfbc02a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#00FFFF'
-  },
-  {
-    id: 'subway-surfers',
-    name: 'Subway Surfers',
-    url: 'https://subwaysurfers.io/',
-    image: 'https://images.unsplash.com/photo-1498177688220-337cecc55be3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#facc15',
-    defaultPortrait: true
-  },
-  {
-    id: 'monkey-mart',
-    name: 'Monkey Mart',
-    url: 'https://monkey-mart.io/',
-    image: 'https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#8b4513'
-  },
-  {
-    id: 'eaglercraft',
-    name: 'Eaglercraft (MC)',
-    url: 'https://eaglercraft.q13x.com/',
-    image: 'https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#a855f7'
-  },
-  {
-    id: 'web-dashers',
-    name: 'Web Dashers',
-    url: 'https://web-dashers.github.io/',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80',
-    color: '#7597de'
-  },
-  {
-    id: 'crossy-road',
-    name: 'Crossy Road',
-    url: 'https://crossy-road.io/',
-    image: 'https://images.unsplash.com/photo-1494809610410-160faaed4de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#39ff14',
-    defaultPortrait: true
-  },
-  {
-    id: '2v2-io',
-    name: '2v2.io',
-    url: 'https://2v2.io/',
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#ff3366'
-  },
-  {
-    id: 'paper-io-2',
-    name: 'Paper.io 2',
-    url: 'https://paper-io.com/',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#FF00FF'
-  },
-  {
     id: 'fnaf-1',
     name: 'FNAF 1',
-    url: 'https://brunoiscool2.github.io/unblockedgames/play/fnaf/',
-    image: 'https://images.unsplash.com/photo-1626244675549-317185ebc839?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    url: 'https://fivenightsatfreddysgame.io/play/five-nights-at-freddys/',
+    image: fnaf1Img,
     color: '#8b0000'
   },
   {
     id: 'fnaf-2',
     name: 'FNAF 2',
-    url: 'https://brunoiscool2.github.io/unblockedgames/play/fnaf2/',
-    image: 'https://images.unsplash.com/photo-1626244675549-317185ebc839?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    url: 'https://fivenightsatfreddysgame.io/play/five-nights-at-freddys-2/',
+    image: fnaf2Img,
     color: '#FF8800'
+  },
+  {
+    id: 'eaglercraft',
+    name: 'Eaglercraft (MC)',
+    url: 'https://eaglercraft.q13x.com/',
+    image: genericGameImg,
+    color: '#a855f7'
   },
   {
     id: 'retro-bowl',
     name: 'Retro Bowl',
-    url: 'https://brunoiscool2.github.io/unblockedgames/play/retrobowl/',
-    image: 'https://images.unsplash.com/photo-1587280510058-2f22b7a9de5d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    url: '/retrobowl.html',
+    image: retrobowlImg,
     color: '#4B3621'
   },
   {
     id: 'slope',
     name: 'Slope',
     url: 'https://brunoiscool2.github.io/unblockedgames/play/slope/',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    image: slopeImg,
     color: '#00FA9A'
   },
   {
-    id: 'drive-mad',
-    name: 'Drive Mad',
-    url: 'https://brunoiscool2.github.io/games1/drivemad/',
-    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    color: '#FF8C00'
+    id: 'subway-surfers',
+    name: 'Subway Surfers',
+    url: 'https://subwaysurfers.io/',
+    image: genericGameImg,
+    color: '#facc15',
+    defaultPortrait: true
+  },
+  {
+    id: 'krunker',
+    name: 'Krunker.io',
+    url: 'https://krunker.io/',
+    image: krunkerImg,
+    color: '#ff3366'
   },
   {
     id: 'fnf',
     name: 'Friday Night Funkin\'',
     url: 'https://brunoiscool2.github.io/fnf/',
-    image: 'https://images.unsplash.com/photo-1516280440502-861fce1a9cbf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    image: fnfImg,
     color: '#FF1493'
+  },
+  {
+    id: 'geometry-dash',
+    name: 'Geometry Dash',
+    url: 'https://geometrydash.io/',
+    image: genericGameImg,
+    color: '#00FFFF'
+  },
+  {
+    id: 'shell-shockers',
+    name: 'Shell Shockers',
+    url: 'https://shellshock.io/',
+    image: shellshockersImg,
+    color: '#facc15'
+  },
+  {
+    id: 'smash-karts',
+    name: 'Smash Karts',
+    url: 'https://smashkarts.com/',
+    image: smashkartsImg,
+    color: '#39ff14'
+  },
+  {
+    id: 'hole-io',
+    name: 'Hole.io',
+    url: 'https://hole-io.com/',
+    image: holeioImg,
+    color: '#FF00FF'
+  },
+  {
+    id: 'paper-io-2',
+    name: 'Paper.io 2',
+    url: 'https://paper-io.com/',
+    image: paperioImg,
+    color: '#FF00FF'
+  },
+  {
+    id: 'drive-mad',
+    name: 'Drive Mad',
+    url: 'https://brunoiscool2.github.io/games1/drivemad/',
+    image: drivemadImg,
+    color: '#FF8C00'
   },
   {
     id: 'snake-io',
     name: 'Snake.io',
     url: 'https://brunoiscool2.github.io/games3/snakeio/',
-    image: 'https://images.unsplash.com/photo-1549429539-7c8008a0d922?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    image: snakeioImg,
     color: '#00FF00'
   },
   {
     id: 'tomb-of-the-mask',
     name: 'Tomb of the Mask',
     url: 'https://beta-brunysixl-v3.onrender.com/games/selfhosted/tombofthemask/index.html',
-    image: 'https://images.unsplash.com/photo-1611099667503-6258aa5655a6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+    image: tombmaskImg,
     color: '#FFD700',
+    defaultPortrait: true
+  },
+  {
+    id: '2v2-io',
+    name: '2v2.io',
+    url: 'https://2v2.io/',
+    image: twovtwoImg,
+    color: '#ff3366'
+  },
+  {
+    id: 'flappy-bird',
+    name: 'Floppy Bird',
+    url: 'https://nebezb.com/floppybird/',
+    image: genericGameImg,
+    color: '#ff3366',
+    defaultPortrait: true
+  },
+  {
+    id: 'monkey-mart',
+    name: 'Monkey Mart',
+    url: 'https://monkey-mart.io/',
+    image: genericGameImg,
+    color: '#8b4513'
+  },
+  {
+    id: 'crossy-road',
+    name: 'Crossy Road',
+    url: 'https://crossy-road.io/',
+    image: genericGameImg,
+    color: '#39ff14',
+    defaultPortrait: true
+  },
+  {
+    id: 'bitlife',
+    name: 'BitLife',
+    url: 'https://bitlifefree.io/',
+    image: genericGameImg,
+    color: '#ff3366',
     defaultPortrait: true
   }
 ];
@@ -209,15 +188,43 @@ export default function App() {
   const [activeGame, setActiveGame] = useState<Game | null>(null);
   const [portraitMode, setPortraitMode] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
+  const exploreAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Stop both to start clean
+    if (welcomeAudioRef.current) welcomeAudioRef.current.pause();
+    if (exploreAudioRef.current) exploreAudioRef.current.pause();
+
+    if (showWelcome) {
+      if (welcomeAudioRef.current) {
+        welcomeAudioRef.current.currentTime = 0;
+        welcomeAudioRef.current.play().catch(e => console.log('Audio play blocked:', e));
+      }
+    } else if (!activeGame) {
+      if (exploreAudioRef.current) {
+        exploreAudioRef.current.currentTime = 0;
+        exploreAudioRef.current.play().catch(e => console.log('Audio play blocked:', e));
+      }
+    }
+  }, [showWelcome, activeGame]);
 
   const handleOpenGame = (game: Game) => {
     setActiveGame(game);
     setPortraitMode(!!game.defaultPortrait);
   };
 
+  const filteredGames = games.filter(game => 
+    game.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
 
   return (
     <>
+      <audio ref={welcomeAudioRef} src="/02.mp3" loop />
+      <audio ref={exploreAudioRef} src="/05.mp3" loop />
+      
       <AnimatePresence>
         {showWelcome && (
           <motion.div
@@ -259,9 +266,15 @@ export default function App() {
                 transition={{ duration: 1.5, type: 'spring', bounce: 0.4 }}
                 className="flex flex-col items-center gap-6"
               >
-                <div className="w-24 h-24 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(168,85,247,0.6)] rotate-3">
-                  <Rocket className="w-12 h-12 text-white drop-shadow-md" />
-                </div>
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="w-24 h-24 relative flex items-center justify-center shrink-0"
+                >
+                  <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-full shadow-[0_0_30px_rgba(168,85,247,0.8)] z-10" />
+                  <div className="absolute w-28 h-6 border-4 border-pink-400/60 rounded-[50%] rotate-[30deg]" />
+                  <div className="absolute w-28 h-6 border-4 border-blue-400/40 rounded-[50%] -rotate-[30deg]" />
+                </motion.div>
                 <h1 className="text-6xl md:text-8xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-300 uppercase m-0 leading-none drop-shadow-lg text-center">
                   GALAXY GAMES
                 </h1>
@@ -310,31 +323,51 @@ export default function App() {
           >
             <header className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 relative z-10 px-8 py-6 border-b border-white/10 bg-black/30 backdrop-blur-md rounded-2xl mx-auto max-w-7xl">
               <motion.div 
-                className="flex items-center gap-3"
+                className="flex items-center gap-3 shrink-0"
                 whileHover={{ scale: 1.02 }}
               >
-                <div className="w-10 h-10 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.5)] rotate-3">
-                  <span className="text-2xl font-black">G</span>
-                </div>
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="w-12 h-12 relative flex items-center justify-center shrink-0"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.8)] z-10" />
+                  <div className="absolute w-14 h-4 border-2 border-pink-400/60 rounded-[50%] rotate-[30deg]" />
+                  <div className="absolute w-14 h-4 border-2 border-blue-400/40 rounded-[50%] -rotate-[30deg]" />
+                </motion.div>
                 <h1 className="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-300 uppercase m-0 leading-none">
                   GALAXY GAMES
                 </h1>
               </motion.div>
               
-              {/* Optional header items can go here */}
+              <div className="relative w-full max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 cursor-pointer" />
+                <input
+                  type="text"
+                  placeholder="Search games..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-12 pr-6 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 transition-colors"
+                />
+              </div>
             </header>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
-              {games.map((game, i) => (
-                <motion.div
-                  key={game.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, type: 'spring' }}
-                  whileHover={{ y: -5 }}
-                  className="group bg-white/5 border border-white/10 rounded-3xl overflow-hidden flex flex-col transition-all cursor-pointer hover:border-white/20 hover:bg-white/10"
-                  onClick={() => handleOpenGame(game)}
-                >
+              {filteredGames.length === 0 ? (
+                <div className="col-span-full py-20 text-center text-gray-400 font-medium">
+                  No games found matching "{searchQuery}"
+                </div>
+              ) : (
+                filteredGames.map((game, i) => (
+                  <motion.div
+                    key={game.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05, type: 'spring' }}
+                    whileHover={{ y: -5 }}
+                    className="group bg-white/5 border border-white/10 rounded-3xl overflow-hidden flex flex-col transition-all cursor-pointer hover:border-white/20 hover:bg-white/10"
+                    onClick={() => handleOpenGame(game)}
+                  >
                   <div className="h-40 relative overflow-hidden bg-gray-800">
                     <img src={game.image} alt={game.name} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
                     <div className="absolute inset-0 bg-black/20"></div>
@@ -348,7 +381,8 @@ export default function App() {
                      <button className="mt-auto w-full py-2 bg-white text-black font-bold text-xs rounded-xl uppercase hover:bg-gray-200 transition-colors">Play Now</button>
                   </div>
                 </motion.div>
-              ))}
+              ))
+              )}
             </div>
             
             <Forum />
