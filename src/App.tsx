@@ -240,6 +240,8 @@ const Clock = () => {
 };
 
 const GameCard = React.memo(({ game, i, onOpen }: { game: Game, i: number, onOpen: (g: Game) => void }) => {
+  const [imgLoaded, setImgLoaded] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5, y: 50 }}
@@ -259,9 +261,19 @@ const GameCard = React.memo(({ game, i, onOpen }: { game: Game, i: number, onOpe
       onClick={() => onOpen(game)}
     >
       <div 
-        className="w-24 h-24 sm:w-28 sm:h-28 relative rounded-full overflow-hidden shadow-[0_15px_25px_rgba(0,0,0,0.4)] border-[3px] border-white/80 group-hover:border-white transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.6)]"
+        className="w-24 h-24 sm:w-28 sm:h-28 relative rounded-full overflow-hidden shadow-[0_15px_25px_rgba(0,0,0,0.4)] border-[3px] border-white/80 group-hover:border-white transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] bg-gray-800"
       >
-        <img src={game.image} alt={game.name} className="absolute inset-0 w-full h-full object-cover z-0 group-hover:scale-110 transition-transform duration-500" />
+        {!imgLoaded && (
+          <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 w-[150%] h-[150%] bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
+          </div>
+        )}
+        <img 
+          src={game.image} 
+          alt={game.name} 
+          onLoad={() => setImgLoaded(true)}
+          className={`absolute inset-0 w-full h-full object-cover z-0 group-hover:scale-110 transition-all duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0 scale-90'}`} 
+        />
         
         {/* Glossy sphere overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(255,255,255,0.8)_0%,_rgba(255,255,255,0)_40%)] pointer-events-none z-10 opacity-70" />

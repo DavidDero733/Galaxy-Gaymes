@@ -14,4 +14,13 @@ body {
   font-family: var(--font-sans);
 }
 
+@keyframes shimmer {
+  0% { transform: translateX(-150%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
 
