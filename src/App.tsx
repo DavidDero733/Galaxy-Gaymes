@@ -14,6 +14,20 @@ interface Game {
 
 const DEFAULT_GAMES: Game[] = [
   {
+    id: 'sonic-robo-blast-2',
+    name: 'Sonic Robo Blast 2',
+    url: 'https://vinmannie.github.io/srb2web/',
+    image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/20/2f/27/202f273f-b11d-52b4-6ab5-a0996bf38b47/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
+    color: '#1E90FF'
+  },
+  {
+    id: 'sonic-mania',
+    name: 'Sonic Mania',
+    url: 'https://vinmannie.github.io/SonicManiaWeb/RSDKv5.html',
+    image: 'https://steamcdn-a.akamaihd.net/steam/apps/584400/header.jpg',
+    color: '#0000FF'
+  },
+  {
     id: 'fnaf-1',
     name: 'FNAF 1',
     url: 'https://fivenightsatfreddysgame.io/play/five-nights-at-freddys/',
