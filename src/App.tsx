@@ -189,19 +189,37 @@ const VITA_BACKGROUNDS = [
   { id: 'purple', color1: '#821AE2', color2: '#380D80', wave: 'rgba(255,255,255,0.1)' },
 ];
 
-const GameCard = ({ game, i, onOpen }: { game: Game, i: number, onOpen: (g: Game) => void }) => {
+const Clock = () => {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="flex flex-col">
+      <span className="text-4xl font-normal ml-2 mb-2 opacity-90">
+        {currentTime.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
+      </span>
+      <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+    </div>
+  );
+};
+
+const GameCard = React.memo(({ game, i, onOpen }: { game: Game, i: number, onOpen: (g: Game) => void }) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5, y: 50 }}
       animate={{ 
         opacity: 1, 
         scale: 1, 
-        y: [0, -10, 0] 
+        y: 0 
       }}
       transition={{ 
         opacity: { delay: i * 0.05, duration: 0.4 },
         scale: { delay: i * 0.05, type: 'spring', bounce: 0.5 },
-        y: { delay: i * 0.05, duration: 4 + (i % 3), repeat: Infinity, ease: 'easeInOut' }
+        y: { delay: i * 0.05, duration: 0.4 }
       }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
@@ -228,57 +246,16 @@ const GameCard = ({ game, i, onOpen }: { game: Game, i: number, onOpen: (g: Game
       </div>
     </motion.div>
   );
-};
+});
 
-const VitaBackground = ({ theme }: { theme: any }) => {
+const VitaBackground = React.memo(({ theme }: { theme: any }) => {
   return (
     <div 
       className="fixed inset-0 pointer-events-none z-[-1] transition-colors duration-1000 overflow-hidden"
       style={{ backgroundImage: `linear-gradient(135deg, ${theme.color1}, ${theme.color2})` }}
-    >
-      {/* Dynamic Ribbon Waves */}
-      <svg className="absolute inset-0 w-[200%] h-full opacity-60 mix-blend-overlay blur-[2px]" preserveAspectRatio="none" viewBox="0 0 100 100">
-        <motion.path
-          fill={theme.wave}
-          animate={{
-            d: [
-              "M0,40 Q25,20 50,40 T100,40 L100,100 L0,100 Z",
-              "M0,40 Q25,60 50,40 T100,40 L100,100 L0,100 Z",
-              "M0,40 Q25,20 50,40 T100,40 L100,100 L0,100 Z"
-            ],
-            x: ["0%", "-50%"]
-          }}
-          transition={{ d: { duration: 12, repeat: Infinity, ease: 'easeInOut' }, x: {duration: 25, repeat: Infinity, ease: 'linear'} }}
-        />
-        <motion.path
-          fill={theme.wave}
-          animate={{
-            d: [
-              "M0,60 Q25,80 50,60 T100,60 L100,100 L0,100 Z",
-              "M0,60 Q25,40 50,60 T100,60 L100,100 L0,100 Z",
-              "M0,60 Q25,80 50,60 T100,60 L100,100 L0,100 Z"
-            ],
-            x: ["-50%", "0%"]
-          }}
-          transition={{ d: {duration: 15, repeat: Infinity, ease: 'easeInOut'}, x: {duration: 30, repeat: Infinity, ease: 'linear'} }}
-        />
-      </svg>
-      {/* Floating particles */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <motion.div
-           key={i}
-           className="absolute w-2 h-2 rounded-full bg-white/30 backdrop-blur-sm"
-           initial={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`, scale: Math.random() + 0.5 }}
-           animate={{ 
-             y: [0, -100, 0],
-             opacity: [0.2, 0.8, 0.2] 
-           }}
-           transition={{ duration: 10 + Math.random() * 10, repeat: Infinity, ease: 'easeInOut', delay: Math.random() * 5 }}
-        />
-      ))}
-    </div>
+    />
   );
-};
+});
 
 export default function App() {
   const [games, setGames] = useState<Game[]>(DEFAULT_GAMES);
@@ -289,12 +266,6 @@ export default function App() {
   const [currentTheme, setCurrentTheme] = useState(VITA_BACKGROUNDS[0]);
   const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
   const exploreAudioRef = useRef<HTMLAudioElement | null>(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     if (!hasInteracted) return;
@@ -367,10 +338,7 @@ export default function App() {
               transition={{ delay: 0.2, duration: 1 }}
               className="relative z-10 text-white font-light text-9xl drop-shadow-[0_4px_15px_rgba(0,0,0,0.5)] tracking-tighter mt-12 w-full px-12 flex justify-between items-start"
             >
-              <div className="flex flex-col">
-                <span className="text-4xl font-normal ml-2 mb-2 opacity-90">{currentTime.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</span>
-                <span>{currentTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-              </div>
+              <Clock />
             </motion.div>
 
             <motion.div 
