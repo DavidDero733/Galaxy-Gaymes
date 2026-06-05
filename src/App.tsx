@@ -10,57 +10,73 @@ interface Game {
   image: string;
   color: string;
   defaultPortrait?: boolean;
+  description?: string;
 }
 
 const DEFAULT_GAMES: Game[] = [
+  {
+    id: 'pokemon-silver',
+    name: 'Pokémon Silver',
+    url: '/pokemon-silver.html',
+    image: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2k3t.jpg',
+    color: '#C0C0C0',
+    description: 'A classic 1999 role-playing game for the Game Boy Color by Game Freak, introducing 100 new Pokémon and the Johto region.'
+  },
   {
     id: 'sonic-robo-blast-2',
     name: 'Sonic Robo Blast 2',
     url: 'https://vinmannie.github.io/srb2web/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/20/2f/27/202f273f-b11d-52b4-6ab5-a0996bf38b47/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#1E90FF'
+    color: '#1E90FF',
+    description: 'A 3D fan-made Sonic the Hedgehog game originally built on a modified Doom engine, featuring fast-paced platforming.'
   },
   {
     id: 'sonic-mania',
     name: 'Sonic Mania',
     url: 'https://vinmannie.github.io/SonicManiaWeb/RSDKv5.html',
     image: 'https://steamcdn-a.akamaihd.net/steam/apps/584400/header.jpg',
-    color: '#0000FF'
+    color: '#0000FF',
+    description: 'A 2017 platform game honoring the original Sega Genesis Sonic games, featuring remixed classic levels and new zones.'
   },
   {
     id: 'fnaf-1',
     name: 'FNAF 1',
     url: 'https://fivenightsatfreddysgame.io/play/five-nights-at-freddys/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9b/77/03/9b77034f-5ade-ddf5-9c2d-48fd8a546c62/AppIcon-1x_U007epad-0-85-220-0.png/512x512bb.jpg',
-    color: '#8b0000'
+    color: '#8b0000',
+    description: 'The iconic 2014 indie survival horror classic where you work as a night security guard at Freddy Fazbear\'s Pizza.'
   },
   {
     id: 'fnaf-2',
     name: 'FNAF 2',
     url: 'https://fivenightsatfreddysgame.io/play/five-nights-at-freddys-2/',
     image: 'https://steamcdn-a.akamaihd.net/steam/apps/332800/header.jpg',
-    color: '#FF8800'
+    color: '#FF8800',
+    description: 'The prequel to the original Five Nights at Freddy\'s, introducing new animatronics and removing the security doors.'
   },
   {
     id: 'eaglercraft',
     name: 'Eaglercraft (MC)',
     url: 'https://eaglercraft.q13x.com/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/c9/81/16/c981164e-410c-7a07-d76b-3a8e4238793b/AppIcon-0-0-1x_U007emarketing-0-10-0-85-220.png/512x512bb.jpg',
-    color: '#a855f7'
+    color: '#a855f7',
+    description: 'A fan-made browser-based port of Minecraft version 1.8.8, complete with online multiplayer server support.'
   },
   {
     id: 'retro-bowl',
     name: 'Retro Bowl',
     url: '/retrobowl.html',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ef/a7/1d/efa71d1e-7304-e890-a09c-72edaa3f6580/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/512x512bb.jpg',
-    color: '#4B3621'
+    color: '#4B3621',
+    description: 'A retro-styled American football game inspired by Tecmo Bowl, emphasizing roster management and arcade gameplay.'
   },
   {
     id: 'slope',
     name: 'Slope',
     url: 'https://brunoiscool2.github.io/unblockedgames/play/slope/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/1a/bd/65/1abd65ad-c663-0b81-daa0-ed8d5d9ce3cb/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg',
-    color: '#00FA9A'
+    color: '#00FA9A',
+    description: 'A fast-paced 3D endless runner where you steer a rolling ball down a steep, randomized neon track.'
   },
   {
     id: 'subway-surfers',
@@ -68,70 +84,80 @@ const DEFAULT_GAMES: Game[] = [
     url: 'https://subwaysurfers.io/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2c/b6/06/2cb606cd-7784-07bf-2c3a-e3ba376dec68/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
     color: '#facc15',
-    defaultPortrait: true
+    defaultPortrait: true,
+    description: 'A highly popular 2012 endless runner where you dodge trains, swipe obstacles, and collect coins on hoverboards.'
   },
   {
     id: 'krunker',
     name: 'Krunker.io',
     url: 'https://krunker.io/',
     image: 'https://steamcdn-a.akamaihd.net/steam/apps/1122100/header.jpg',
-    color: '#ff3366'
+    color: '#ff3366',
+    description: 'A fast-paced, blocky multiplayer first-person shooter focused heavily on advanced movement mechanics like slide-hopping.'
   },
   {
     id: 'fnf',
     name: 'Friday Night Funkin\'',
     url: 'https://brunoiscool2.github.io/fnf/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7f/40/e9/7f40e93d-18b8-a9f7-f98f-8bcb0c219ed9/AppIcon-0-0-1x_U007emarketing-0-11-0-P3-85-220.png/512x512bb.jpg',
-    color: '#FF1493'
+    color: '#FF1493',
+    description: 'A 2020 open-source rhythm game featuring catchy rap battles, memorable characters, and a massive modding community.'
   },
   {
     id: 'geometry-dash',
     name: 'Geometry Dash',
-    url: 'https://geometrydash.io/',
+    url: 'https://web-dashers.github.io/',
     image: 'https://steamcdn-a.akamaihd.net/steam/apps/322170/header.jpg',
-    color: '#00FFFF'
+    color: '#00FFFF',
+    description: 'A challenging 2013 rhythm-based platformer where you jump and fly your icon through danger to upbeat electronic music.'
   },
   {
     id: 'shell-shockers',
     name: 'Shell Shockers',
     url: 'https://shellshock.io/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/11/b0/d6/11b0d6e0-3e89-0dfd-b445-7d299d00b33f/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#facc15'
+    color: '#facc15',
+    description: 'A unique multiplayer first-person shooter where you play as an egg equipped with an arsenal of varied weaponry.'
   },
   {
     id: 'smash-karts',
     name: 'Smash Karts',
     url: 'https://smashkarts.com/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/20/b3/08/20b3085b-14b3-a0bf-3e58-c4cc7ffaa048/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#39ff14'
+    color: '#39ff14',
+    description: 'A multiplayer 3D kart racing game featuring weapons, chaotic power-ups, and intense arena battles.'
   },
   {
     id: 'hole-io',
     name: 'Hole.io',
     url: 'https://hole-io.com/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9f/fa/fa/9ffafa69-3740-3a05-2a31-2d3061afc644/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#FF00FF'
+    color: '#FF00FF',
+    description: 'A multiplayer physics game where you control a black hole, eating objects in a sprawling city to grow larger.'
   },
   {
     id: 'paper-io-2',
     name: 'Paper.io 2',
     url: 'https://paper-io.com/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c9/d7/80/c9d78046-a119-b893-eace-abf59653e560/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#FF00FF'
+    color: '#FF00FF',
+    description: 'A competitive territory-capturing game where you draw shapes to expand your color across a shared flat arena.'
   },
   {
     id: 'drive-mad',
     name: 'Drive Mad',
     url: 'https://brunoiscool2.github.io/games1/drivemad/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3b/0a/e1/3b0ae123-071f-b60d-9434-1bf69a7552af/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#FF8C00'
+    color: '#FF8C00',
+    description: 'A quirky physics-based driving game where you navigate wacky 4x4 vehicles over blocky, challenging terrain.'
   },
   {
     id: 'snake-io',
     name: 'Snake.io',
     url: 'https://brunoiscool2.github.io/games3/snakeio/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/84/53/31/845331ee-e088-5438-377b-b82d60845e93/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#00FF00'
+    color: '#00FF00',
+    description: 'A modernized competitive version of the classic Snake game featuring multiplier elements and customizable skins.'
   },
   {
     id: 'tomb-of-the-mask',
@@ -139,14 +165,16 @@ const DEFAULT_GAMES: Game[] = [
     url: 'https://beta-brunysixl-v3.onrender.com/games/selfhosted/tombofthemask/index.html',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4c/b3/8e/4cb38eef-73f9-fd90-94d7-a8dcbd90ab32/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
     color: '#FFD700',
-    defaultPortrait: true
+    defaultPortrait: true,
+    description: 'A fast-paced retro arcade game where you swipe to move a masked explorer through winding vertical labyrinths.'
   },
   {
     id: '2v2-io',
     name: '2v2.io',
     url: 'https://2v2.io/',
     image: 'https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?q=80&w=600&auto=format&fit=crop',
-    color: '#ff3366'
+    color: '#ff3366',
+    description: 'A multiplayer tactical browser game featuring intense team-based 2v2 competitive gameplay.'
   },
   {
     id: 'flappy-bird',
@@ -154,14 +182,16 @@ const DEFAULT_GAMES: Game[] = [
     url: 'https://nebezb.com/floppybird/',
     image: 'https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png',
     color: '#ff3366',
-    defaultPortrait: true
+    defaultPortrait: true,
+    description: 'A simple, highly addictive endless sidescroller inspired by the 2013 mobile hit Flappy Bird, testing reaction speed.'
   },
   {
     id: 'monkey-mart',
     name: 'Monkey Mart',
     url: 'https://monkey-mart.io/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5c/09/44/5c094471-f115-c8b9-6df0-559630eebc4e/AppIcon-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg',
-    color: '#8b4513'
+    color: '#8b4513',
+    description: 'An idle tycoon arcade game where you slowly build, manage, and expand a supermarket run entirely by monkeys.'
   },
   {
     id: 'crossy-road',
@@ -169,7 +199,8 @@ const DEFAULT_GAMES: Game[] = [
     url: 'https://crossy-road.io/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/1f/f3/9c/1ff39cc7-a4af-4d4a-e8af-b3bdcb9028a9/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
     color: '#39ff14',
-    defaultPortrait: true
+    defaultPortrait: true,
+    description: 'A 2014 voxel-style arcade game inspired by Frogger, challenging players to relentlessly cross treacherous rivers and highways.'
   },
   {
     id: 'bitlife',
@@ -177,7 +208,8 @@ const DEFAULT_GAMES: Game[] = [
     url: 'https://bitlifefree.io/',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/83/17/fe/8317feb8-8517-f350-40e4-cc547f732210/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
     color: '#ff3366',
-    defaultPortrait: true
+    defaultPortrait: true,
+    description: 'A popular text-based life simulation game where every narrative choice you make dictates your character\'s timeline.'
   }
 ];
 
@@ -223,7 +255,7 @@ const GameCard = React.memo(({ game, i, onOpen }: { game: Game, i: number, onOpe
       }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
-      className="group relative flex flex-col items-center gap-2 cursor-pointer w-[110px] sm:w-[130px]"
+      className="group relative flex flex-col items-center gap-2 cursor-pointer w-[110px] sm:w-[130px] z-10 hover:z-50"
       onClick={() => onOpen(game)}
     >
       <div 
@@ -244,6 +276,13 @@ const GameCard = React.memo(({ game, i, onOpen }: { game: Game, i: number, onOpe
       >
          {game.name}
       </div>
+
+      {game.description && (
+        <div className="absolute top-[105%] left-1/2 -translate-x-1/2 w-48 sm:w-56 p-3 bg-black/90 backdrop-blur-xl text-white text-xs text-center rounded-xl border border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.8)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
+          <p className="font-bold mb-1 text-sm">{game.name}</p>
+          <p className="text-white/80 leading-relaxed">{game.description}</p>
+        </div>
+      )}
     </motion.div>
   );
 });
