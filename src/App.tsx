@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { Gamepad2, X, Plus, Rocket, Globe, Smartphone, Monitor, Search, Settings } from 'lucide-react';
+import { Gamepad2, X, Plus, Rocket, Globe, Smartphone, Monitor, Search, Settings, Heart } from 'lucide-react';
 import { Forum } from './components/Forum';
 
 interface Game {
@@ -14,14 +14,14 @@ interface Game {
   category?: string;
 }
 
-const CATEGORIES = ["All", "Action", "Arcade", "Platformer", "Shooter", "Simulation", "Sports", "RPG", "Other"];
+const CATEGORIES = ["All", "Favorites", "Action", "Arcade", "Platformer", "Shooter", "Simulation", "Sports", "RPG", "Other"];
 
 const DEFAULT_GAMES: Game[] = [
   {
     id: 'pokemon-silver',
     name: 'Pokémon Silver',
     url: '/pokemon-silver.html',
-    image: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2k3t.jpg',
+    image: 'https://images.nintendolife.com/games/gbc/pokemon_silver/cover_large.jpg',
     color: '#C0C0C0',
     description: 'A classic 1999 role-playing game for the Game Boy Color by Game Freak, introducing 100 new Pokémon and the Johto region.',
     category: 'RPG'
@@ -100,15 +100,6 @@ const DEFAULT_GAMES: Game[] = [
     category: 'Arcade'
   },
   {
-    id: 'krunker',
-    name: 'Krunker.io',
-    url: 'https://krunker.io/',
-    image: 'https://steamcdn-a.akamaihd.net/steam/apps/1122100/header.jpg',
-    color: '#ff3366',
-    description: 'A fast-paced, blocky multiplayer first-person shooter focused heavily on advanced movement mechanics like slide-hopping.',
-    category: 'Shooter'
-  },
-  {
     id: 'fnf',
     name: 'Friday Night Funkin\'',
     url: 'https://brunoiscool2.github.io/fnf/',
@@ -143,15 +134,6 @@ const DEFAULT_GAMES: Game[] = [
     color: '#39ff14',
     description: 'A multiplayer 3D kart racing game featuring weapons, chaotic power-ups, and intense arena battles.',
     category: 'Action'
-  },
-  {
-    id: 'hole-io',
-    name: 'Hole.io',
-    url: 'https://hole-io.com/',
-    image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9f/fa/fa/9ffafa69-3740-3a05-2a31-2d3061afc644/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-    color: '#FF00FF',
-    description: 'A multiplayer physics game where you control a black hole, eating objects in a sprawling city to grow larger.',
-    category: 'Arcade'
   },
   {
     id: 'paper-io-2',
@@ -194,10 +176,19 @@ const DEFAULT_GAMES: Game[] = [
     id: '2v2-io',
     name: '2v2.io',
     url: 'https://2v2.io/',
-    image: 'https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?q=80&w=600&auto=format&fit=crop',
+    image: 'https://2v2.io/favicon/android-chrome-512x512.png',
     color: '#ff3366',
     description: 'A multiplayer tactical browser game featuring intense team-based 2v2 competitive gameplay.',
     category: 'Action'
+  },
+  {
+    id: 'basket-random',
+    name: 'Basket Random',
+    url: 'https://2048taylorswift.github.io/basketrandom/',
+    image: 'https://play-lh.googleusercontent.com/gP8T5Z1O-ngxIloiwcBZzrzyLPYDp0R_1BDNKUDZboIRPVImeyWI8-7aExvB9gAGNKc=w512',
+    color: '#ff8c00',
+    description: 'A hilarious physics-based basketball game where you try to score with wacky characters and unpredictable controls.',
+    category: 'Sports'
   },
   {
     id: 'flappy-bird',
@@ -249,13 +240,7 @@ const DEFAULT_GAMES: Game[] = [
   }
 ];
 
-const VITA_BACKGROUNDS = [
-  { id: 'blue', color1: '#1A82E2', color2: '#0D3880', wave: 'rgba(255,255,255,0.1)' },
-  { id: 'pink', color1: '#E21A82', color2: '#800D38', wave: 'rgba(255,255,255,0.1)' },
-  { id: 'green', color1: '#1AE282', color2: '#0D8038', wave: 'rgba(255,255,255,0.1)' },
-  { id: 'charcoal', color1: '#333333', color2: '#111111', wave: 'rgba(255,255,255,0.05)' },
-  { id: 'purple', color1: '#821AE2', color2: '#380D80', wave: 'rgba(255,255,255,0.1)' },
-];
+const FIREWATCH_THEME = { id: 'firewatch', color1: '#fc8f3d', color2: '#2a111a', wave: 'rgba(252,143,61,0.05)' };
 
 const Clock = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -266,81 +251,98 @@ const Clock = () => {
   }, []);
 
   return (
-    <div className="flex flex-col">
-      <span className="text-4xl font-normal ml-2 mb-2 opacity-90">
-        {currentTime.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
+    <div className="flex items-center gap-4">
+      <span className="text-xl font-light opacity-90 text-white">
+        {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </span>
-      <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
     </div>
   );
 };
 
-const GameCard = React.memo(({ game, i, onOpen }: { game: Game, i: number, onOpen: (g: Game) => void }) => {
+const GameCard = React.memo(({ game, i, onOpen, isFavorite, onToggleFavorite }: { game: Game, i: number, onOpen: (g: Game) => void, isFavorite: boolean, onToggleFavorite: () => void }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.5, y: 50 }}
+      initial={{ opacity: 0, x: 50 }}
       animate={{ 
         opacity: 1, 
-        scale: 1, 
-        y: 0 
+        x: 0 
       }}
       transition={{ 
         opacity: { delay: i * 0.05, duration: 0.4 },
-        scale: { delay: i * 0.05, type: 'spring', bounce: 0.5 },
-        y: { delay: i * 0.05, duration: 0.4 }
+        x: { delay: i * 0.05, duration: 0.4 }
       }}
-      whileHover={{ scale: 1.1 }}
+      whileHover={{ y: -10, scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="group relative flex flex-col items-center gap-2 cursor-pointer w-[110px] sm:w-[130px] z-10 hover:z-50"
+      className="group relative flex flex-col cursor-pointer shrink-0 z-10 hover:z-50"
       onClick={() => onOpen(game)}
     >
       <div 
-        className="w-24 h-24 sm:w-28 sm:h-28 relative rounded-full overflow-hidden shadow-[0_15px_25px_rgba(0,0,0,0.4)] border-[3px] border-white/80 group-hover:border-white transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] bg-gray-800"
+        className="w-32 h-32 sm:w-40 sm:h-40 relative bg-gray-900 shadow-[0_10px_20px_rgba(0,0,0,0.5)] border-2 border-transparent group-hover:border-white transition-all duration-200"
       >
         {!imgLoaded && (
-          <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 w-[150%] h-[150%] bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
-          </div>
+          <div className="absolute inset-0 z-0 bg-blue-900/20 animate-pulse" />
         )}
         <img 
           src={game.image} 
           alt={game.name} 
           onLoad={() => setImgLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover z-0 group-hover:scale-110 transition-all duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0 scale-90'}`} 
+          className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} 
         />
         
-        {/* Glossy sphere overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(255,255,255,0.8)_0%,_rgba(255,255,255,0)_40%)] pointer-events-none z-10 opacity-70" />
-        <div className="absolute inset-0 border-[4px] border-white/20 rounded-full pointer-events-none z-10" />
-        
-        {/* Shadow inner ring */}
-        <div className="absolute inset-0 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.6)] rounded-full pointer-events-none z-10" />
+        {/* Shadow inner overlay on hover */}
+        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 pointer-events-none transition-colors duration-200 z-10" />
       </div>
       
-      <div 
-        className="px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-white text-xs font-bold w-full text-center truncate shadow-lg border border-white/20 group-hover:bg-white/90 group-hover:text-black group-hover:border-white transition-colors"
-      >
-         {game.name}
+      <div className="mt-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <span className="text-white text-md font-medium tracking-wide truncate max-w-[120px] sm:max-w-[140px]">
+          {game.name}
+        </span>
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+          className="p-1 rounded-full hover:bg-white/20 transition-all z-[100]"
+        >
+          <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-blue-500 text-blue-500' : 'text-white/70'}`} />
+        </button>
       </div>
 
       {game.description && (
-        <div className="absolute top-[105%] left-1/2 -translate-x-1/2 w-48 sm:w-56 p-3 bg-black/90 backdrop-blur-xl text-white text-xs text-center rounded-xl border border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.8)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
-          <p className="font-bold mb-1 text-sm">{game.name}</p>
-          <p className="text-white/80 leading-relaxed">{game.description}</p>
+        <div className="absolute top-[125%] left-0 w-72 p-4 bg-[#2a111a] text-[#fc8f3d] text-sm border-2 border-[#fc8f3d] shadow-[4px_4px_0_0_rgba(252,143,61,0.3)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 font-mono overflow-hidden">
+          {/* Retro scanlines */}
+          <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none opacity-50 mix-blend-overlay"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[#fc8f3d]/50">
+              <span className="block w-2 h-2 bg-[#fc8f3d] animate-pulse rounded-none"></span>
+              <span className="uppercase tracking-widest font-bold text-xs">{game.name}</span>
+            </div>
+            <p className="leading-relaxed opacity-90 text-xs mb-3 text-white/90 font-sans">{game.description}</p>
+            <div className="flex justify-between items-center text-[10px] opacity-70 uppercase tracking-widest text-[#fc8f3d]">
+              <span>ROM_DATA</span>
+              <span>[{game.category}]</span>
+            </div>
+          </div>
         </div>
       )}
     </motion.div>
   );
 });
 
-const VitaBackground = React.memo(({ theme }: { theme: any }) => {
+const BackgroundTheme = React.memo(({ theme }: { theme: any }) => {
   return (
     <div 
       className="fixed inset-0 pointer-events-none z-[-1] transition-colors duration-1000 overflow-hidden"
-      style={{ backgroundImage: `linear-gradient(135deg, ${theme.color1}, ${theme.color2})` }}
-    />
+    >
+      <motion.img 
+        src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/383870/589f62a8f5867c5d4966bb857e736928b7d208b2/page_bg_raw.jpg?t=1755789801"
+        className="absolute inset-0 w-full h-full object-cover"
+        animate={{ scale: [1.05, 1.1, 1.05], x: [0, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#2a111a] via-[#be4f3c]/20 to-transparent" />
+      <div className="absolute inset-0 bg-[#be4f3c] mix-blend-overlay opacity-30" />
+    </div>
   );
 });
 
@@ -350,15 +352,21 @@ export default function App() {
   const [portraitMode, setPortraitMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('ps4-favorites') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState(VITA_BACKGROUNDS[0]);
   const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
   const exploreAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!hasInteracted) return;
 
-    // Stop both to start clean
     if (welcomeAudioRef.current) welcomeAudioRef.current.pause();
     if (exploreAudioRef.current) exploreAudioRef.current.pause();
 
@@ -367,7 +375,7 @@ export default function App() {
         audioElement.currentTime = 0;
         await audioElement.play();
       } catch (e) {
-        console.warn('Audio playback failed (file might be missing or blocked):', e);
+        console.warn('Audio playback failed');
       }
     };
 
@@ -378,6 +386,16 @@ export default function App() {
     }
   }, [activeGame, hasInteracted]);
 
+  useEffect(() => {
+    localStorage.setItem('ps4-favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (gameId: string) => {
+    setFavorites(prev => 
+      prev.includes(gameId) ? prev.filter(id => id !== gameId) : [...prev, gameId]
+    );
+  };
+
   const handleOpenGame = (game: Game) => {
     setActiveGame(game);
     setPortraitMode(!!game.defaultPortrait);
@@ -385,7 +403,8 @@ export default function App() {
 
   const filteredGames = games.filter(game => {
     const matchesSearch = game.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || game.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || 
+                            (selectedCategory === 'Favorites' ? favorites.includes(game.id) : game.category === selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -399,151 +418,123 @@ export default function App() {
         {!hasInteracted && (
           <motion.div 
             key="lockscreen"
-            className="fixed inset-0 z-[200] flex flex-col items-center justify-between py-16 cursor-pointer shadow-[20px_20px_60px_rgba(0,0,0,0.5)] origin-[100%_0%] overflow-hidden"
-            style={{ backgroundImage: `linear-gradient(to bottom right, ${currentTheme.color1}, ${currentTheme.color2})` }}
+            className="fixed inset-0 z-[200] flex flex-col items-center justify-center cursor-pointer overflow-hidden"
             onClick={() => {
               setHasInteracted(true);
             }}
-            initial={{ opacity: 1, y: 0, scale: 1, rotate: 0, borderBottomLeftRadius: 0 }}
+            initial={{ opacity: 1 }}
             exit={{ 
               opacity: 0, 
-              y: "-80%", 
-              x: "80%", 
-              rotate: 35,
-              borderBottomLeftRadius: '100%',
-              transition: { duration: 0.8, ease: [0.8, 0, 0.2, 1] }
+              transition: { duration: 0.5 }
             }}
           >
-            {/* Glossy fold effect on peel */}
-            <div className="absolute inset-0 bg-gradient-to-bl from-white/40 via-transparent to-transparent opacity-0 pointer-events-none" />
-            
-            {/* Top Right Fold Indicator */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/40 to-transparent flex items-start justify-end p-4 rounded-bl-[100%] animate-pulse">
-              <span className="text-white text-xl font-light transform rotate-[-45deg] translate-x-1 translate-y-1">◢</span>
+            <div className="absolute top-8 left-12">
+               <Clock />
             </div>
-
+            
             <motion.div 
-              initial={{ y: -20, opacity: 0 }} 
-              animate={{ y: 0, opacity: 1 }} 
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
               transition={{ delay: 0.2, duration: 1 }}
-              className="relative z-10 text-white font-light text-9xl drop-shadow-[0_4px_15px_rgba(0,0,0,0.5)] tracking-tighter mt-12 w-full px-12 flex justify-between items-start"
+              className="flex flex-col items-center backdrop-blur-sm bg-black/10 p-12 rounded-3xl border border-white/10 shadow-2xl"
             >
-              <Clock />
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="relative z-10 text-white font-semibold text-lg tracking-widest uppercase drop-shadow-md pb-12 flex flex-col items-center gap-4"
-            >
-              Peel to start
+              <div className="w-16 h-16 rounded-full border-4 border-white/80 flex items-center justify-center mb-8 bg-gradient-to-br from-[#fc8f3d] to-[#be4f3c] shadow-[0_0_20px_rgba(252,143,61,0.5)]">
+                <span className="text-white font-bold text-2xl">G</span>
+              </div>
+              <h2 className="text-white text-3xl font-light mb-12 tracking-wide drop-shadow-md">Welcome Back to Galaxy-Games</h2>
+              
+              <div className="flex items-center gap-3 animate-pulse text-white/90">
+                <span className="text-xl font-light tracking-widest text-[#fc8f3d]">Click</span>
+                <span className="text-xl font-light tracking-widest">to start</span>
+              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <VitaBackground theme={currentTheme} />
-      
-      {/* Background Theme Selector */}
-      <div className="fixed bottom-6 right-6 z-[100] flex gap-3 bg-black/40 backdrop-blur-md p-3 rounded-full border border-white/20 shadow-xl opacity-50 hover:opacity-100 transition-opacity">
-        <Settings className="w-6 h-6 text-white self-center mx-2" />
-        {VITA_BACKGROUNDS.map(bg => (
-          <button 
-            key={bg.id}
-            onClick={() => setCurrentTheme(bg)} 
-            className={`w-8 h-8 rounded-full border-2 transition-transform ${currentTheme.id === bg.id ? 'border-white scale-110' : 'border-white/40 hover:scale-105'}`}
-            style={{ background: bg.color1 }}
-          />
-        ))}
-      </div>
+      <BackgroundTheme theme={FIREWATCH_THEME} />
 
       {/* Main Content */}
       <AnimatePresence>
         {!activeGame && hasInteracted && (
           <motion.div 
             key="maingrid"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="min-h-screen p-6 md:p-12 relative z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.05, filter: 'blur(20px)' }}
+            transition={{ duration: 0.4 }}
+            className="min-h-screen relative z-10 flex flex-col pt-10"
           >
-            <header className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6 relative z-10 px-8 py-4 border border-white/20 bg-white/10 backdrop-blur-xl shadow-xl rounded-full mx-auto max-w-7xl">
-              <motion.div 
-                className="flex items-center gap-4 shrink-0"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="w-12 h-12 bg-white/20 rounded-full shadow-inner flex items-center justify-center border border-white/50">
-                  <Gamepad2 className="text-white w-6 h-6" />
-                </div>
-                <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow-md uppercase italic">
-                  LiveArea
-                </h1>
-              </motion.div>
-              
-              <div className="relative w-full max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70 cursor-pointer" />
-                <input
-                  type="text"
-                  placeholder="Search apps..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-black/40 border border-white/30 rounded-full py-3 pl-12 pr-6 text-white placeholder-white/60 font-medium focus:outline-none focus:border-white focus:bg-black/60 transition-all backdrop-blur-md shadow-inner"
-                />
-              </div>
-            </header>
-
-            <div className="w-full max-w-4xl mx-auto mb-10 px-4 relative z-10">
-              <div className="overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
-                <div className="flex justify-start sm:justify-center">
-                  <div className="inline-flex gap-1 p-1.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <header className="flex justify-between items-start px-12 relative z-10 w-full mb-12">
+              <div className="flex items-center gap-12 flex-1 relative">
+                <div 
+                  className="w-full overflow-x-auto no-scrollbar py-2"
+                  style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 3%, black 97%, transparent)' }}
+                >
+                  <div className="flex items-center gap-8 px-8">
                     {CATEGORIES.map(category => (
                       <button
                         key={category}
                         onClick={() => setSelectedCategory(category)}
-                        className={`relative px-6 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 ${
+                        className={`text-lg transition-colors font-light tracking-wide shrink-0 ${
                           selectedCategory === category 
-                            ? 'text-white' 
-                            : 'text-white/60 hover:text-white hover:bg-white/10'
+                            ? 'text-white font-medium border-b-2 border-white pb-1' 
+                            : 'text-white/50 hover:text-white/80'
                         }`}
                       >
-                        {selectedCategory === category && (
-                          <motion.div 
-                            layoutId="activeCategory"
-                            className="absolute inset-0 bg-white/20 border border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.4)] rounded-full z-0 pointer-events-none"
-                            initial={false}
-                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                          />
-                        )}
-                        <span className="relative z-10">{category}</span>
+                        {category}
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-16 max-w-5xl mx-auto px-4 py-10">
-              {filteredGames.length === 0 ? (
-                <div className="w-full py-20 text-center text-white/80 font-bold text-xl">
-                  No applications found
+              
+              <div className="flex items-center gap-8 pl-8">
+                <div className="relative w-64 shrink-0">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-[#2a111a]/50 border border-[#fc8f3d]/20 rounded-full py-2 pl-10 pr-4 text-white text-sm placeholder-white/40 focus:outline-none focus:bg-[#4a1f2d]/80 focus:border-[#fc8f3d]/50 transition-all font-mono"
+                  />
                 </div>
-              ) : (
-                filteredGames.map((game, i) => (
-                  <GameCard key={game.id} game={game} i={i} onOpen={handleOpenGame} />
-              ))
-              )}
+                <div className="flex items-center gap-4 shrink-0 text-[#fc8f3d]/90 font-mono">
+                  <div className="w-8 h-8 rounded-full border-2 border-[#fc8f3d]/50 bg-[#be4f3c]/20 flex items-center justify-center shadow-[0_0_10px_rgba(252,143,61,0.2)]">
+                     <span className="text-[#fc8f3d] text-xs font-bold font-sans">G</span>
+                  </div>
+                  <Clock />
+                </div>
+              </div>
+            </header>
+
+            <div className="flex-1 w-full flex items-center px-12 min-h-[400px]">
+              <div className="w-full overflow-x-auto no-scrollbar pt-12 pb-4 scroll-smooth">
+                <div className="flex gap-4 min-w-max pb-[280px] px-4" style={{ minWidth: 'min-content' }}>
+                  {filteredGames.length === 0 ? (
+                    <div className="w-full py-20 text-white/50 font-light text-xl pl-8">
+                      {selectedCategory === 'Favorites' ? "No favorites found." : "No games match your search."}
+                    </div>
+                  ) : (
+                    filteredGames.map((game, i) => (
+                      <GameCard 
+                        key={game.id} 
+                        game={game} 
+                        i={i} 
+                        onOpen={handleOpenGame} 
+                        isFavorite={favorites.includes(game.id)}
+                        onToggleFavorite={() => toggleFavorite(game.id)}
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
             
-            <div className="mt-20">
+            <div className="mt-auto px-12 pb-8">
               <Forum />
             </div>
-            
-            <p className="text-center mt-16 text-white/50 font-sans text-sm font-medium">
-              Note: Unblocked games are fetched via third-party GitHub Pages and HTML URLs. <br/>
-              To export this site to GitHub, simply build it and push the static files!
-            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -555,15 +546,15 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black flex flex-col items-center overflow-x-hidden"
+            className="fixed inset-0 z-50 bg-transparent flex flex-col items-center overflow-x-hidden"
           >
-            {/* Game Player Fullscreen with LiveArea Theme */}
-            <div className="flex items-center justify-between px-8 py-4 bg-black/60 border-b border-white/10 backdrop-blur-2xl w-full shadow-md z-10">
-              <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20 shadow-inner">
-                   <Gamepad2 className="w-5 h-5 text-white drop-shadow-md" />
+            {/* Game Player Fullscreen Theme */}
+            <div className="flex items-center justify-between px-8 py-4 bg-[#2a111a]/80 border-b border-[#be4f3c]/20 backdrop-blur-2xl w-full shadow-[0_4px_30px_rgba(0,0,0,0.5)] z-10">
+              <div className="flex items-center gap-4">
+                 <div className="w-12 h-12 bg-gradient-to-br from-[#fc8f3d] to-[#be4f3c] rounded-full flex items-center justify-center border-2 border-white/80 shadow-[0_0_15px_rgba(252,143,61,0.4)]">
+                   <Gamepad2 className="w-6 h-6 text-white drop-shadow-md" />
                  </div>
-                 <h2 className="text-xl font-bold tracking-tight text-white drop-shadow-md">
+                 <h2 className="text-2xl font-light tracking-wide text-white drop-shadow-md uppercase">
                   {activeGame.name}
                  </h2>
               </div>
@@ -573,7 +564,7 @@ export default function App() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setPortraitMode(!portraitMode)}
-                  className="px-5 py-2.5 bg-white/10 rounded-full border border-white/20 hover:bg-white/20 font-semibold text-xs transition-all flex items-center gap-2 text-white hidden sm:flex cursor-pointer shadow-[0_0_10px_rgba(255,255,255,0.1)] backdrop-blur-md"
+                  className="px-5 py-2.5 bg-[#be4f3c]/20 rounded-full border border-[#fc8f3d]/40 hover:bg-[#be4f3c]/40 font-semibold text-xs transition-all flex items-center gap-2 text-[#fc8f3d] hidden sm:flex cursor-pointer shadow-[0_0_10px_rgba(252,143,61,0.1)] backdrop-blur-md"
                 >
                   {portraitMode ? <Monitor className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
                   {portraitMode ? 'Landscape' : 'Portrait'}
@@ -582,7 +573,7 @@ export default function App() {
                   href={activeGame.url} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="px-5 py-2.5 bg-white/20 rounded-full border border-white/40 hover:bg-white/30 font-semibold text-xs transition-all flex items-center gap-2 text-white cursor-pointer shadow-[0_0_15px_rgba(255,255,255,0.2)] backdrop-blur-md"
+                  className="px-5 py-2.5 bg-[#be4f3c]/20 rounded-full border border-[#fc8f3d]/40 hover:bg-[#fc8f3d]/30 font-semibold text-xs transition-all flex items-center gap-2 text-[#fc8f3d] cursor-pointer shadow-[0_0_15px_rgba(252,143,61,0.2)] backdrop-blur-md"
                 >
                   Open in Browser <Globe className="w-4 h-4" />
                 </a>
@@ -590,7 +581,7 @@ export default function App() {
                   whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setActiveGame(null)}
-                  className="bg-black/40 hover:bg-red-500/80 text-white rounded-full p-2.5 cursor-pointer border border-white/30 shadow-inner backdrop-blur-md transition-colors"
+                  className="bg-[#2a111a]/60 hover:bg-[#be4f3c] text-white rounded-full p-2.5 cursor-pointer border border-[#fc8f3d]/40 shadow-[0_0_15px_rgba(252,143,61,0.2)] backdrop-blur-md transition-all"
                 >
                   <X className="w-6 h-6" />
                 </motion.button>
@@ -598,7 +589,7 @@ export default function App() {
             </div>
             
             <div className={`flex-1 w-full relative flex justify-center items-center overflow-hidden ${portraitMode ? 'p-0 sm:p-6 md:p-12' : ''}`}>
-              <VitaBackground theme={currentTheme} />
+              <BackgroundTheme theme={FIREWATCH_THEME} />
               <div className="absolute inset-0 bg-black/40 -z-10" />
               <div className={`w-full h-full relative transition-all duration-500 ${portraitMode ? 'max-w-md max-h-[85vh] sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] border-4 border-black/80' : ''}`}>
                 <iframe 
