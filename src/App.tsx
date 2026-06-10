@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { Gamepad2, X, Plus, Rocket, Globe, Smartphone, Monitor, Search, Settings, Heart } from 'lucide-react';
+import { Gamepad2, X, Plus, Rocket, Globe, Smartphone, Monitor, Search, Settings, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Forum } from './components/Forum';
 
 interface Game {
@@ -261,6 +261,7 @@ const Clock = () => {
 
 const GameCard = React.memo(({ game, i, onOpen, isFavorite, onToggleFavorite }: { game: Game, i: number, onOpen: (g: Game) => void, isFavorite: boolean, onToggleFavorite: () => void }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   return (
     <motion.div
@@ -273,58 +274,62 @@ const GameCard = React.memo(({ game, i, onOpen, isFavorite, onToggleFavorite }: 
         opacity: { delay: i * 0.05, duration: 0.4 },
         x: { delay: i * 0.05, duration: 0.4 }
       }}
-      whileHover={{ y: -10, scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="group relative flex flex-col cursor-pointer shrink-0 z-10 hover:z-50"
-      onClick={() => onOpen(game)}
+      className="group relative flex flex-col shrink-0 z-10 hover:z-50 [perspective:1000px]"
+      onMouseEnter={() => setIsFlipped(true)}
+      onMouseLeave={() => setIsFlipped(false)}
     >
       <div 
-        className="w-32 h-32 sm:w-40 sm:h-40 relative bg-gray-900 shadow-[0_10px_20px_rgba(0,0,0,0.5)] border-2 border-transparent group-hover:border-white transition-all duration-200"
+        className="w-40 h-40 sm:w-48 sm:h-48 relative shadow-[0_10px_20px_rgba(0,0,0,0.5)] border-2 border-transparent group-hover:border-[#fc8f3d] transition-all duration-500 transform-gpu cursor-pointer [transform-style:preserve-3d]"
+        style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+        onClick={() => !isFlipped && onOpen(game)}
       >
-        {!imgLoaded && (
-          <div className="absolute inset-0 z-0 bg-blue-900/20 animate-pulse" />
-        )}
-        <img 
-          src={game.image} 
-          alt={game.name} 
-          onLoad={() => setImgLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} 
-        />
-        
-        {/* Shadow inner overlay on hover */}
-        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 pointer-events-none transition-colors duration-200 z-10" />
-      </div>
-      
-      <div className="mt-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <span className="text-white text-md font-medium tracking-wide truncate max-w-[120px] sm:max-w-[140px]">
-          {game.name}
-        </span>
-        <button
-          onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-          className="p-1 rounded-full hover:bg-white/20 transition-all z-[100]"
-        >
-          <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-blue-500 text-blue-500' : 'text-white/70'}`} />
-        </button>
-      </div>
+        {/* Front */}
+        <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center bg-[#2a111a]">
+          {!imgLoaded && (
+            <div className="absolute inset-0 z-0 bg-black/60 animate-pulse flex items-center justify-center">
+              <span className="text-[#fc8f3d] text-xs font-mono">LOADING_ROM</span>
+            </div>
+          )}
+          <img 
+            src={game.image} 
+            alt={game.name} 
+            onLoad={() => setImgLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} 
+          />
+          <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 to-transparent">
+            <span className="text-white text-sm font-semibold tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate block text-center">
+              {game.name}
+            </span>
+          </div>
+        </div>
 
-      {game.description && (
-        <div className="absolute top-[125%] left-0 w-72 p-4 bg-[#2a111a] text-[#fc8f3d] text-sm border-2 border-[#fc8f3d] shadow-[4px_4px_0_0_rgba(252,143,61,0.3)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 font-mono overflow-hidden">
-          {/* Retro scanlines */}
+        {/* Back */}
+        <div 
+          className="absolute inset-0 [backface-visibility:hidden] bg-[#2a111a] text-[#fc8f3d] border-2 border-[#fc8f3d]/50 p-4 font-mono flex flex-col justify-between overflow-hidden [transform:rotateY(180deg)] cursor-pointer"
+          onClick={() => onOpen(game)}
+        >
           <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none opacity-50 mix-blend-overlay"></div>
           
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[#fc8f3d]/50">
+          <div className="relative z-10 flex-col h-full flex">
+            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[#fc8f3d]/50 shrink-0">
               <span className="block w-2 h-2 bg-[#fc8f3d] animate-pulse rounded-none"></span>
-              <span className="uppercase tracking-widest font-bold text-xs">{game.name}</span>
+              <span className="uppercase tracking-widest font-bold text-[10px] sm:text-xs truncate">{game.name}</span>
             </div>
-            <p className="leading-relaxed opacity-90 text-xs mb-3 text-white/90 font-sans">{game.description}</p>
-            <div className="flex justify-between items-center text-[10px] opacity-70 uppercase tracking-widest text-[#fc8f3d]">
-              <span>ROM_DATA</span>
+            <p className="leading-snug opacity-90 text-[10px] sm:text-[11px] mb-3 text-white/90 font-sans line-clamp-4 flex-1">
+              {game.description}
+            </p>
+            <div className="flex justify-between items-center text-[9px] sm:text-[10px] opacity-70 uppercase tracking-widest text-[#fc8f3d] shrink-0">
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+                className="p-1.5 rounded bg-[#fc8f3d]/20 hover:bg-[#fc8f3d]/40 transition-colors z-[100]"
+              >
+                 <Heart className={`w-3 h-3 ${isFavorite ? 'fill-[#fc8f3d] text-[#fc8f3d]' : 'text-white/70'}`} />
+              </button>
               <span>[{game.category}]</span>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </motion.div>
   );
 });
@@ -352,6 +357,7 @@ export default function App() {
   const [portraitMode, setPortraitMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [showSettings, setShowSettings] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem('ps4-favorites') || '[]');
@@ -363,6 +369,19 @@ export default function App() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
   const exploreAudioRef = useRef<HTMLAudioElement | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     if (!hasInteracted) return;
@@ -501,6 +520,12 @@ export default function App() {
                   />
                 </div>
                 <div className="flex items-center gap-4 shrink-0 text-[#fc8f3d]/90 font-mono">
+                  <button 
+                    onClick={() => setShowSettings(true)}
+                    className="p-2 rounded-full hover:bg-[#fc8f3d]/20 transition-colors"
+                  >
+                    <Settings className="w-5 h-5 text-[#fc8f3d]" />
+                  </button>
                   <div className="w-8 h-8 rounded-full border-2 border-[#fc8f3d]/50 bg-[#be4f3c]/20 flex items-center justify-center shadow-[0_0_10px_rgba(252,143,61,0.2)]">
                      <span className="text-[#fc8f3d] text-xs font-bold font-sans">G</span>
                   </div>
@@ -509,9 +534,21 @@ export default function App() {
               </div>
             </header>
 
-            <div className="flex-1 w-full flex items-center px-12 min-h-[400px]">
-              <div className="w-full overflow-x-auto no-scrollbar pt-12 pb-4 scroll-smooth">
-                <div className="flex gap-4 min-w-max pb-[280px] px-4" style={{ minWidth: 'min-content' }}>
+            <div className="flex-1 w-full flex items-center px-12 min-h-[400px] relative">
+              {/* Left Arrow Scroll Navigation */}
+              <button 
+                onClick={scrollLeft}
+                className="absolute left-2 z-50 p-2.5 bg-[#2a111a]/90 border-2 border-[#fc8f3d]/60 rounded-full text-[#fc8f3d] hover:bg-[#fc8f3d] hover:text-[#2a111a] transition-all duration-200 shadow-[0_0_15px_rgba(252,143,61,0.3)] hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center group"
+                title="Scroll Left"
+              >
+                <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
+              </button>
+
+              <div 
+                ref={carouselRef}
+                className="w-full overflow-x-auto custom-scrollbar pt-12 pb-2 scroll-smooth"
+              >
+                <div className="flex gap-4 min-w-max pb-[260px] px-4" style={{ minWidth: 'min-content' }}>
                   {filteredGames.length === 0 ? (
                     <div className="w-full py-20 text-white/50 font-light text-xl pl-8">
                       {selectedCategory === 'Favorites' ? "No favorites found." : "No games match your search."}
@@ -530,11 +567,94 @@ export default function App() {
                   )}
                 </div>
               </div>
+
+              {/* Right Arrow Scroll Navigation */}
+              <button 
+                onClick={scrollRight}
+                className="absolute right-2 z-50 p-2.5 bg-[#2a111a]/90 border-2 border-[#fc8f3d]/60 rounded-full text-[#fc8f3d] hover:bg-[#fc8f3d] hover:text-[#2a111a] transition-all duration-200 shadow-[0_0_15px_rgba(252,143,61,0.3)] hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center group"
+                title="Scroll Right"
+              >
+                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
+              </button>
             </div>
             
             <div className="mt-auto px-12 pb-8">
               <Forum />
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Settings Modal */}
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-md bg-[#2a111a] border-2 border-[#fc8f3d]/50 shadow-[0_0_30px_rgba(252,143,61,0.3)] rounded-xl relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none opacity-20 mix-blend-overlay"></div>
+              
+              <div className="flex justify-between items-center p-6 border-b border-[#fc8f3d]/30 relative z-10">
+                <h2 className="text-2xl font-light tracking-widest text-[#fc8f3d] uppercase font-mono">Settings</h2>
+                <button 
+                  onClick={() => setShowSettings(false)}
+                  className="p-2 rounded-full hover:bg-[#fc8f3d]/20 text-[#fc8f3d] transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="p-6 relative z-10 space-y-6 text-white/90 font-mono">
+                <div className="space-y-2">
+                  <label className="text-xs uppercase tracking-widest text-[#fc8f3d]">User Display Name</label>
+                  <input 
+                    type="text" 
+                    defaultValue="Guest"
+                    className="w-full bg-black/30 border border-[#fc8f3d]/30 rounded p-3 text-white focus:outline-none focus:border-[#fc8f3d]/80 transition-colors"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs uppercase tracking-widest text-[#fc8f3d]">System Theme</label>
+                  <select className="w-full bg-black/30 border border-[#fc8f3d]/30 rounded p-3 text-white focus:outline-none focus:border-[#fc8f3d]/80 transition-colors cursor-pointer appearance-none">
+                    <option value="firewatch">Firewatch Theme</option>
+                    <option value="classic">Classic Theme</option>
+                  </select>
+                </div>
+                
+                <div className="space-y-4 pt-4 border-t border-[#fc8f3d]/20">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Scanline Effect</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" defaultChecked className="sr-only peer" />
+                      <div className="w-11 h-6 bg-black/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#fc8f3d] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#fc8f3d]"></div>
+                    </label>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Background Animation</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" defaultChecked className="sr-only peer" />
+                      <div className="w-11 h-6 bg-black/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#fc8f3d] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#fc8f3d]"></div>
+                    </label>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => setShowSettings(false)}
+                  className="w-full mt-4 bg-[#fc8f3d] text-black font-bold py-3 uppercase tracking-widest hover:bg-white transition-colors rounded"
+                >
+                  Save Settings
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
